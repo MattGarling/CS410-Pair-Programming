@@ -250,6 +250,7 @@ public class BlackJack {
 				doubleDownButton.setEnabled(false);
 				
 				if(playerBet * 2 < playerChips) {
+					lowerPlayerChips(playerBet);
 					playerBet *= 2; //double the user's bet
 					
 					//give the user their one card
@@ -519,32 +520,39 @@ public class BlackJack {
 	//get the user's input and set their bet for this hand
 	public void setUserBet() {
 		while (true) {
-			String betFieldText = JOptionPane.showInputDialog(null, "Enter your bet (Remaing chips: " + playerChips + "):");
-			try {
-				if (betFieldText == null || betFieldText.trim().isEmpty()) {
-					throw new NumberFormatException();
-				}
-				// Try to parse the input as an integer
-				playerBet = Integer.parseInt(betFieldText);
+	        String betFieldText = JOptionPane.showInputDialog(null, "Enter your bet (Remaining chips: " + playerChips + "):");
+	        
+	        // Check if the user clicked cancel or closed the dialog
+	        if (betFieldText == null) {
+	            // Handle the case where the user canceled or closed the dialog
+	            // For example, you may want to exit the game or take other actions.
+	            System.exit(0);  // You may adjust this based on your requirements
+	        }
 
-				// Check if the parsed number is within the valid range
-				if (playerBet < 10 || playerBet > 50000 || playerBet > playerChips) {
-					throw new NumberFormatException();
-				}
-				// If everything is valid, break out of the loop
-				break;
-			} catch (NumberFormatException nfe) {
-				// Handle if the input is empty, not a number, or outside the valid range
-				JOptionPane.showMessageDialog(null, "Invalid Bet: Please enter a number between 10 and 50000 and it must be under " + playerChips,
-						"Invalid Bet", JOptionPane.ERROR_MESSAGE);
-			}
-		}
-		lowerPlayerChips(playerBet);
-		System.out.println(currentPlayerUsername + " bet " + playerBet + " chips");
+	        try {
+	            // Try to parse the input as an integer
+	            playerBet = Integer.parseInt(betFieldText);
+
+	            // Check if the parsed number is within the valid range
+	            if (playerBet < 10 || playerBet > 50000 || playerBet > playerChips) {
+	                throw new NumberFormatException();
+	            }
+
+	            // If everything is valid, break out of the loop
+	            break;
+	        } catch (NumberFormatException nfe) {
+	            // Handle if the input is empty, not a number, or outside the valid range
+	            JOptionPane.showMessageDialog(null, "Invalid Bet: Please enter a number between 10 and 50000 and it must be under " + playerChips,
+	                    "Invalid Bet", JOptionPane.ERROR_MESSAGE);
+	        }
+	    }
+	    lowerPlayerChips(playerBet);
+	    System.out.println(currentPlayerUsername + " bet " + playerBet + " chips");
 	}
 
 	//lower the player's chips when the player loses
 	public void lowerPlayerChips(int playerBet) {
+		
 		playerChips -= playerBet;
 		saveChipTotalToFile(); // Save chip total to file after lowering
 	}
